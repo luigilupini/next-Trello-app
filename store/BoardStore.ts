@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { getTodosGroupedByColumn } from "@/libs/getTodosGroupedByColumn";
+import { getTodosGroupedByColumn } from "@/libs/getTodosGroupByColumn";
 
 interface BoardState {
     board: Board;
