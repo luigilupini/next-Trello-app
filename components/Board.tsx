@@ -1,9 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 
 export default function Board() {
+    useEffect(() => {
+        // Calling a action like getBoardData() here that needs to be global :)
+    }, []);
     return (
         <DragDropContext
             onDragEnd={(result) => {
