@@ -1,7 +1,7 @@
 import './globals.css';
-import { Inter } from 'next/font/google';
+import { Karla } from 'next/font/google';
 
-const inter = Inter({ subsets: ['latin'] });
+const karla = Karla({ subsets: ['latin'] });
 
 export const metadata = {
     title: 'Trello Clone',
@@ -15,7 +15,9 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-            <body className={inter.className}>{children}</body>
+            <body className={`${karla.className} bg-[#f5f6f8]`}>
+                {children}
+            </body>
         </html>
     );
 }
