@@ -32,15 +32,62 @@ export default function Board() {
 
         // Lets handle a column drag and drop operation
         if (type === 'column') {
-            const newEntries = Array.from(board.columns.entries());
-            const [removed] = newEntries.splice(source.index, 1);
-            newEntries.splice(destination.index, 0, removed);
-            const rearrangedColumns = new Map(newEntries);
+            const newBoard = Array.from(board.columns.entries());
+            const [removed] = newBoard.splice(source.index, 1);
+            newBoard.splice(destination.index, 0, removed);
+            const rearrangedColumns = new Map(newBoard);
             setBoardState({
                 ...board,
                 columns: rearrangedColumns
             })
         }
+
+        // Lets handle the card drag and drop operation
+        // This step is needed as the indexes are stored as numbers 0, 1, 2, etc instead of `id` used by the DragDropContext
+        // Now we need a copy of all the current columns in the board (avoid mutation)
+        const currentColumns = Array.from(board.columns);
+        // Next we figure out the start & end index by using the `source` and `destination` from result parameter
+        const startColumnIndex = currentColumns[Number(source.droppableId)]
+        const endColumnIndex = currentColumns[Number(destination.droppableId)]
+        // With these values we rebuilding the desired start & end columns with the new order of todos
+        const startColumn = {
+            id: startColumnIndex[0],
+            todos: endColumnIndex[1].todos
+        }
+        const endColumn = {
+            id: endColumnIndex[0],
+            todos: startColumnIndex[1].todos
+        }
+
+        // If no change in the order is found, exit early
+        if (!startColumn || !endColumn) return;
+        // If its also within the same column, exit early
+        if (source.index === destination.index && startColumn === endColumn) return;
+
+        // Now we need a copy of all the current todos in the column (avoid mutation)
+        const newTodos = startColumn.todos
+        const [todoMoved] = newTodos.splice(source.index, 1);
+        // If we are moving the todo within the same column
+        if (startColumn.id === endColumn.id) {
+            // Same column task drag and drop
+            newTodos.splice(destination.index, 0, todoMoved);
+            // Rebuild the column with the new order of todos (avoid mutation)
+            const newColumn = {
+                id: startColumn.id,
+                todos: newTodos
+            }
+            // Now we need to rebuild the column with the new order of todos (avoid mutation)
+            const newColumns = new Map(board.columns);
+            newColumns.set(startColumn.id, newColumn);
+            // Finally we update the board state with the new columns
+            setBoardState({
+                ...board,
+                columns: newColumns
+            })
+        } else {
+            // Different column task drag and drop
+        }
+
     }
 
     return (
