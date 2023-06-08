@@ -4,7 +4,7 @@ import { getTodosGroupedByColumn } from "@/libs/getTodosGroupByColumn";
 interface BoardState {
     board: Board;
     getBoard: () => void;
-    setBoardState: (board: Board) => void;
+    setBoard: (board: Board) => void;
 }
 
 const useBoardStore = create<BoardState>((set) => ({
@@ -20,7 +20,7 @@ const useBoardStore = create<BoardState>((set) => ({
         const board = await getTodosGroupedByColumn();
         set({ board }); // Expects a `board` object back from `getTodosGroupedByColumn`
     },
-    setBoardState: (board) => set({ board }),
+    setBoard: (board) => set({ board }),
 }));
 
 export default useBoardStore;
