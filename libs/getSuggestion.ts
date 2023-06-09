@@ -7,7 +7,7 @@ function formatTodosForAI(board: Board) {
         map[key] = value.todos;
         return map;
     }, {} as { [key in TypedColumn]: Todo[] });
-    console.log('Working on data: : ', flatArray);
+    // console.log('Working on data: : ', flatArray);
 
     // Then we count the number of todos in each column
     const flatArrayCounted = Object.entries(flatArray).reduce(
@@ -17,14 +17,14 @@ function formatTodosForAI(board: Board) {
         },
         {} as { [key in TypedColumn]: number }
     );
-    console.log('Working on data: : ', flatArrayCounted);
+    // console.log('Working on data: : ', flatArrayCounted);
 
     return flatArrayCounted;
 }
 
 const getSuggestion = async (board: Board) => {
     const todos = formatTodosForAI(board);
-    console.log('FORMATTED TODOS TO SEND: ', todos);
+    // console.log('FORMATTED TODOS TO SEND: ', todos);
 
     const response = await fetch('/api/generateSummary', {
         method: 'POST',
