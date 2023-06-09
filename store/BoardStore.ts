@@ -1,10 +1,12 @@
 import { create } from "zustand";
 import { getTodosGroupedByColumn } from "@/libs/getTodosGroupByColumn";
+import { database } from "@/appwrite";
 
 interface BoardState {
     board: Board;
     getBoard: () => void;
     setBoard: (board: Board) => void;
+    updateTodoDB: (todo: Todo, columnId: TypedColumn) => void;
 }
 
 const useBoardStore = create<BoardState>((set) => ({
@@ -21,6 +23,15 @@ const useBoardStore = create<BoardState>((set) => ({
         set({ board }); // Expects a `board` object back from `getTodosGroupedByColumn`
     },
     setBoard: (board) => set({ board }),
+    updateTodoDB: async (todo, columnId) => {
+        await database.updateDocument(
+            process.env.NEXT_PUBLIC_DATABASE_ID!,
+            process.env.NEXT_PUBLIC_TODOS_COLLECTION_ID!,
+            todo.$id,
+            // We need to pass in the update required
+            { title: todo.title, status: columnId }
+        );
+    },
 }));
 
 export default useBoardStore;

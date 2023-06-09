@@ -7,10 +7,11 @@ import { DragDropContext, DropResult, Droppable } from 'react-beautiful-dnd';
 import ColumnItem from './ColumnItem';
 
 export default function Board() {
-    const [board, getBoard, setBoard] = useBoardStore((state) => [
+    const [board, getBoard, setBoard, updateTodoDB] = useBoardStore((state) => [
         state.board,
         state.getBoard,
-        state.setBoard
+        state.setBoard,
+        state.updateTodoDB
     ])
 
     useEffect(() => {
@@ -103,6 +104,7 @@ export default function Board() {
                 id: finishCol.id,
                 todos: finishTodos
             })
+            updateTodoDB(todoMoved, finishCol.id)
             setBoard({ ...board, columns: newColumns })
         }
 
