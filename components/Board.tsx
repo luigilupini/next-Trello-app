@@ -33,7 +33,7 @@ export default function Board() {
         // If the user drags outside of the board meaning any destination, exit early
         if (!destination) return;
 
-        // * COLUMN DRAG & DROP (WITHIN BOARD ONLY)
+        // * COLUMN DRAG & DROP (WITHIN BOARD)
         // Lets handle a column drag and drop operation
         if (type === 'column') {
             const newBoard = Array.from(board.columns.entries());
@@ -45,34 +45,34 @@ export default function Board() {
             return // Exit return if no other operation is needed
         }
 
-        // * CONVERT MAP INTO ARRAY FOR SPLICING OPERATIONS
+        // * REQUIRED MAP INTO ARRAY SPLICING OPERATION
         // Lets handle the card drag and drop operation
         // The create/convert `from` an iterable object the Map to an Array
         // We need a copy of all the current columns in the board (avoid mutation)
         const currentColumns = Array.from(board.columns);
         // Next we figure out the start & end index by using the `source` and `destination` from result parameter
         const startColIndex = currentColumns[Number(source.droppableId)]
-        const endColIndex = currentColumns[Number(destination.droppableId)]
+        const finishColIndex = currentColumns[Number(destination.droppableId)]
         // With these values we rebuilding the desired start & end columns with the new order of todos
         const startCol = {
             id: startColIndex[0],
             todos: startColIndex[1].todos
         }
-        const endCol = {
-            id: endColIndex[0],
-            todos: endColIndex[1].todos
+        const finishCol = {
+            id: finishColIndex[0],
+            todos: finishColIndex[1].todos
         }
         // If no change in the order is found, exit early
-        if (!startCol || !endCol) return;
+        if (!startCol || !finishCol) return;
         // If its also within the same column, exit early
-        if (source.index === destination.index && startCol === endCol) return;
+        if (source.index === destination.index && startCol === finishCol) return;
         // Now we need a copy of all the current todos in the column (avoid mutation)
         const newTodos = startCol.todos
         const [todoMoved] = newTodos.splice(source.index, 1);
 
-        // * CARD DRAG & DROP (WITHIN SAME COLUMN ONLY)
+        // * CARD DRAG & DROP (WITHIN SAME COLUMN)
         // If we are moving the todo within the same column
-        if (startCol.id === endCol.id) {
+        if (startCol.id === finishCol.id) {
             // Same column task drag and drop
             newTodos.splice(destination.index, 0, todoMoved);
             const newCol = {
@@ -86,8 +86,24 @@ export default function Board() {
             // Finally we update the board state with the new columns
             setBoard({ ...board, columns: newColumns })
         } else {
-            // * CARD DRAG & DROP (DIFFERENT COLUMN ONLY)
-            // Different column task drag and drop
+            // * CARD DRAG & DROP (FOR DIFFERENT COLUMN)
+            // Different column task drag and drop has to modify start & finish columns
+            // You have to make the correct changes in each column to reflect the interaction
+            const finishTodos = Array.from(finishCol.todos);
+            finishTodos.splice(destination.index, 0, todoMoved);
+
+            const newColumns = new Map(board.columns);
+            const newCol = {
+                id: startCol.id,
+                todos: newTodos
+            }
+            // Here we actually update the start and finish column arrangements
+            newColumns.set(startCol.id, newCol)
+            newColumns.set(finishCol.id, {
+                id: finishCol.id,
+                todos: finishTodos
+            })
+            setBoard({ ...board, columns: newColumns })
         }
 
     }
