@@ -7,6 +7,8 @@ interface BoardState {
     getBoard: () => void;
     setBoard: (board: Board) => void;
     updateTodoDB: (todo: Todo, columnId: TypedColumn) => void;
+    searchString: string;
+    setSearchString: (searchString: string) => void;
 }
 
 const useBoardStore = create<BoardState>((set) => ({
@@ -17,6 +19,7 @@ const useBoardStore = create<BoardState>((set) => ({
         // It has a key of "TypedColumn" and a value of "Column" type :)
         columns: new Map<TypedColumn, Column>(),
     },
+    searchString: "",
     // The function "actions" that updates the store
     getBoard: async () => {
         const board = await getTodosGroupedByColumn();
@@ -32,6 +35,7 @@ const useBoardStore = create<BoardState>((set) => ({
             { title: todo.title, status: columnId }
         );
     },
+    setSearchString: (searchString) => set({ searchString }),
 }));
 
 export default useBoardStore;
